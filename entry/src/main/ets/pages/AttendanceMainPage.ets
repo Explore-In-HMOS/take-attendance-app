@@ -1,10 +1,9 @@
-// AttendanceMainPage.ts
-import { AttendanceCard } from "../components/AttendanceCard";
-import { AttendanceRecord } from "../models/AttendanceRecord";
-import { UIContext, ArcList, ArcListItem, ArcListAttribute, ArcListItemAttribute, ComponentContent, } from '@kit.ArkUI';
-import { abilityAccessCtrl, common, Permissions } from "@kit.AbilityKit";
-import { BusinessError } from "@kit.BasicServicesKit";
-import { RouterUtils } from "../utils/RouterUtils";
+import { AttendanceCard } from '../components/AttendanceCard';
+import { AttendanceRecord } from '../models/AttendanceRecord';
+import { ArcList, ArcListItem, ArcListAttribute } from '@kit.ArkUI';
+import { abilityAccessCtrl, common, Permissions } from '@kit.AbilityKit';
+import { BusinessError } from '@kit.BasicServicesKit';
+import { BaseViewModel } from '../viewmodel/BaseViewModel';
 
 const permissions: Array<Permissions> =
   ['ohos.permission.LOCATION', 'ohos.permission.APPROXIMATELY_LOCATION', 'ohos.permission.VIBRATE'];
@@ -21,10 +20,14 @@ function reqPermissionsFromUser(permissions: Array<Permissions>, context: common
         return;
       }
     }
-    // Authorization is successful.
   }).catch((err: BusinessError) => {
     console.error(`Failed to request permissions from user. Code is ${err.code}, message is ${err.message}`);
   })
+}
+
+@Builder
+export function AttendanceMainPageBuilder() {
+  AttendanceMainPage()
 }
 
 @Entry
@@ -32,8 +35,9 @@ function reqPermissionsFromUser(permissions: Array<Permissions>, context: common
 export struct AttendanceMainPage {
   @State attendanceRecords: AttendanceRecord[] = [
     new AttendanceRecord('2025-8-26', '08:08:17', '17:00:20', 'approved'),
-    new AttendanceRecord('Today', '--:--:--', '--:--:--', 'waiting'),
+    new AttendanceRecord('Today', '--:--:--', '--:--:--', 'waiting')
   ];
+  baseVm: BaseViewModel = new BaseViewModel();
 
   aboutToAppear() {
 
@@ -50,13 +54,11 @@ export struct AttendanceMainPage {
         .margin({ top: 25, bottom: 20 })
 
       ArcList() {
-        ForEach(this.attendanceRecords, (record: AttendanceRecord, index: number) => {
+        ForEach(this.attendanceRecords, (record: AttendanceRecord) => {
           ArcListItem() {
             AttendanceCard({ record: record })
               .onClick(() => {
-                RouterUtils.routePageWithObjectParams('pages/AttendanceDetailPage',
-                  record
-                );
+                this.baseVm.navigationService.pageInfos.pushPath({ name: 'Detail', param: JSON.stringify(record) })
               })
               .padding(5)
           }

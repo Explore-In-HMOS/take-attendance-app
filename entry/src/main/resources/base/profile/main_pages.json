@@ -1,6 +1,7 @@
 {
   "src": [
     "pages/AttendanceMainPage",
-    "pages/AttendanceDetailPage"
+    "pages/AttendanceDetailPage",
+    "pages/Index"
   ]
 }

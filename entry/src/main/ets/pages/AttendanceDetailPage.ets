@@ -1,19 +1,27 @@
-// AttendanceDetailPage.ts
 import { LocationPoint, LocationService } from '../services/LocationService';
 import { AttendanceRecord } from '../models/AttendanceRecord';
-import { prompt, router } from '@kit.ArkUI';
+import { PromptAction, uiObserver } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { vibrator } from '@kit.SensorServiceKit';
-import { RouterUtils } from '../utils/RouterUtils';
+import { BaseViewModel } from '../viewmodel/BaseViewModel';
 
-@Entry
+@Builder
+export function AttendanceDetailPageBuilder() {
+  AttendanceDetailPage()
+}
+
+@Entry({ routeName: 'AttendanceDetailPage' })
 @Component
-struct AttendanceDetailPage {
+export struct AttendanceDetailPage {
   @State currentRecord: AttendanceRecord = new AttendanceRecord();
   @State currentTime: string = '--:--:--';
   @State isInRange: boolean = false;
   @State distance: number = 0;
   @State message: string = 'Checking for location';
+  baseVm: BaseViewModel = new BaseViewModel();
+  navDesInfo: uiObserver.NavDestinationInfo | undefined
+   item: AttendanceRecord = new AttendanceRecord();
+  promptAction: PromptAction = this.getUIContext().getPromptAction();
   // Example coordinate
   private companyLocation: LocationPoint = {
     latitude: 39.8649463,
@@ -26,8 +34,13 @@ struct AttendanceDetailPage {
   private locationService: LocationService = new LocationService();
 
   aboutToAppear() {
-    const params = RouterUtils.getParams();
     this.updateCurrentTime();
+    this.navDesInfo = this.queryNavDestinationInfo();
+
+    if (this.navDesInfo?.param) {
+      this.item = JSON.parse(this.navDesInfo?.param?.valueOf().toString())
+    }
+    this.currentRecord = this.item
   }
 
   aboutToDisappear() {
@@ -44,7 +57,7 @@ struct AttendanceDetailPage {
     try {
       vibrator.startVibration({
         type: 'time',
-        duration: 200,
+        duration: 200
       }, {
         id: 0,
         usage: 'alarm'
@@ -75,9 +88,8 @@ struct AttendanceDetailPage {
         );
 
         this.isInRange = this.distance <= this.maxDistance;
-        this.message = this.isInRange
-          ? `Attendance succesfull (${this.distance.toFixed(0)}m)`
-          : `Unavailable location (${this.distance.toFixed(0)}m)`;
+        this.message = this.isInRange ? `Attendance succesfull (${this.distance.toFixed(0)}m)` :
+          `Unavailable location (${this.distance.toFixed(0)}m)`;
       } else {
         this.message = 'Failure getting location';
       }
@@ -92,12 +104,16 @@ struct AttendanceDetailPage {
     await this.checkLocation();
 
     if (!this.isInRange) {
-      prompt.showToast({ message: 'Out of range. Enable Wi-Fi to improve location accuracy!', duration: 3000 });
+      this.promptAction.showToast({
+        message: 'Out of range. Enable Wi-Fi to improve location accuracy!',
+        duration: 3000
+      });
       return;
+
     }
 
     if (this.currentRecord.isComplete()) {
-      prompt.showToast({ message: 'Attendance successful.', duration: 3000 });
+      this.promptAction.showToast({ message: 'Attendance successful.', duration: 3000 });
       return;
     }
 
@@ -107,14 +123,16 @@ struct AttendanceDetailPage {
     if (this.currentRecord.firstRecord === '--:--:--') {
       // First record
       this.currentRecord.recordFirstEntry();
-      const message = this.currentRecord.status === 'late'
-        ? `You are late! Time: ${this.currentRecord.firstRecord}`
-        : `First record has taken: ${this.currentRecord.firstRecord}`;
-      prompt.showToast({ message: message, duration: 3000 });
+      const message = this.currentRecord.status === 'late' ? `You are late! Time: ${this.currentRecord.firstRecord}` :
+        `First record has taken: ${this.currentRecord.firstRecord}`;
+      this.promptAction.showToast({ message: message, duration: 3000 });
     } else {
       // Last record
       this.currentRecord.recordLastEntry();
-      prompt.showToast({ message: `Last record has taken: ${this.currentRecord.lastRecord}`, duration: 3000 });
+      this.promptAction.showToast({
+        message: `Last record has taken: ${this.currentRecord.lastRecord}`,
+        duration: 3000
+      });
     }
   }
 
@@ -193,7 +211,9 @@ struct AttendanceDetailPage {
 
         Button('Back')
           .width('80%')
-          .onClick(() => router.back())
+          .onClick(() => {
+            this.baseVm.navigationService.pageInfos.pop()
+          })
           .margin({ top: 10 })
       }
       .width('100%')

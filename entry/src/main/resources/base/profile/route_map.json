@@ -1,0 +1,28 @@
+{
+  "routerMap": [
+    {
+      "name": "AttendanceMainPage",
+      "pageSourceFile": "src/main/ets/pages/AttendanceMainPage.ets",
+      "buildFunction": "AttendanceMainPageBuilder",
+      "data": {
+        "description": "this is AttendanceMainPage"
+      }
+    },
+    {
+      "name": "AttendanceDetailPage",
+      "pageSourceFile": "src/main/ets/pages/AttendanceDetailPage.ets",
+      "buildFunction": "AttendanceDetailPageBuilder",
+      "data": {
+        "description": "this is AttendanceDetailPage"
+      }
+    },
+    {
+      "name": "Deneme",
+      "pageSourceFile": "src/main/ets/pages/Deneme.ets",
+      "buildFunction": "DenemeBuilder",
+      "data": {
+        "description": "this is AttendanceDetailPage"
+      }
+    }
+  ]
+}

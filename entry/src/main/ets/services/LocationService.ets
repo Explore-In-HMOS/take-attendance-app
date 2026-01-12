@@ -1,4 +1,4 @@
-import { geoLocationManager } from "@kit.LocationKit";
+import { geoLocationManager } from '@kit.LocationKit';
 
 export type LocationFix = geoLocationManager.Location;
 
@@ -87,16 +87,14 @@ export class LocationService {
   // Haversine distance function
   distanceMeters(a: LocationPoint, b: LocationPoint): number {
     const R: number = 6371e3; // Earth radius as meters
-    const φ1: number = a.latitude * Math.PI / 180;
-    const φ2: number = b.latitude * Math.PI / 180;
-    const Δφ: number = (b.latitude - a.latitude) * Math.PI / 180;
-    const Δλ: number = (b.longitude - a.longitude) * Math.PI / 180;
-
-    const aCalc: number = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-      Math.cos(φ1) * Math.cos(φ2) *
-      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const phi1: number = a.latitude * Math.PI / 180;
+    const phi2: number = b.latitude * Math.PI / 180;
+    const deltaPhi: number = (b.latitude - a.latitude) * Math.PI / 180;
+    const deltaLambda: number = (b.longitude - a.longitude) * Math.PI / 180;
+    const aCalc: number = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+      Math.cos(phi1) * Math.cos(phi2) *
+      Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
     const c: number = 2 * Math.atan2(Math.sqrt(aCalc), Math.sqrt(1 - aCalc));
-
     return R * c;
   }
 }

@@ -1,13 +1,9 @@
-import { prompt } from '@kit.ArkUI';
+import { PromptAction } from '@kit.ArkUI';
 
 export class PromptUtils {
-  static showToast(message: string, duration: number = 3000): void {
+  static showToast(promptAction: PromptAction, message: string, duration: number = 3000): void {
     try {
-
-      prompt.showToast({
-        message: message,
-        duration: duration
-      });
+      promptAction.showToast({ message, duration });
     } catch (error) {
       console.error('Toast not shown:', error);
     }

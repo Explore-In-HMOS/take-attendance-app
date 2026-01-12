@@ -1,23 +1,33 @@
+import { NavigationService } from '../services/NavigationService';
+import { AttendanceDetailPage } from './AttendanceDetailPage';
+import { AttendanceMainPage } from './AttendanceMainPage';
+
 @Entry
 @Component
 struct Index {
-  @State message: string = 'Hello World';
+  navigationService: NavigationService = NavigationService.getInstance();
+
+  @Builder
+  routeMap(name: string) {
+    NavDestination() {
+      if (name === 'Main') {
+        AttendanceMainPage()
+      } else if (name === 'Detail') {
+        AttendanceDetailPage()
+      }
+    }
+    .hideTitleBar(true)
+  }
 
   build() {
-    RelativeContainer() {
-      Text(this.message)
-        .id('HelloWorld')
-        .fontSize($r('app.float.page_text_font_size'))
-        .fontWeight(FontWeight.Bold)
-        .alignRules({
-          center: { anchor: '__container__', align: VerticalAlign.Center },
-          middle: { anchor: '__container__', align: HorizontalAlign.Center }
-        })
-        .onClick(() => {
-          this.message = 'Welcome';
-        })
+    Navigation(this.navigationService.pageInfos) {
+      AttendanceMainPage()
     }
-    .height('100%')
+    .mode(NavigationMode.Stack)
+    .navDestination(this.routeMap)
+    .ignoreLayoutSafeArea()
+    .hideTitleBar(true)
     .width('100%')
+    .height('100%')
   }
 }
