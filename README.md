@@ -2,7 +2,7 @@
 
 # TakeAttendanceApp
 
-This is a practical industrial application for the usages in attendance record systems and called as TakeAttendanceApp, built with ArkTS and ArkUI with intuitive location detection and sensor usage features, designed for HarmonyOS NEXT wearable devices. It leverages SensorKit and LocationKit with circular screen support.
+This is a practical industrial application for the usages in attendance record systems and called as TakeAttendanceApp, built with ArkTS and ArkUI with intuitive location detection and sensor usage features, designed for HarmonyOS wearable devices. It leverages SensorKit and LocationKit with circular screen support.
 
 # Preview
 <div>
